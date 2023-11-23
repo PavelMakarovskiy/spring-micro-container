@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.jb.micro.container'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
