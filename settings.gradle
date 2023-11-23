@@ -1,2 +1,4 @@
 rootProject.name = 'spring-micro-container'
 
+includeBuild 'eureka-server'
+
