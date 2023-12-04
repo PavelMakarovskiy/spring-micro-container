@@ -12,8 +12,11 @@ public class MicroController {
     @Value("${eureka.instance.instance-id}")
     private String id;
 
+    @Value("${tmpValue}")
+    private int tmpValue;
+
     @GetMapping("/micro")
     public String micro() {
-        return id;
+        return id + ":" + tmpValue;
     }
 }
