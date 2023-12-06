@@ -32,6 +32,16 @@
                   <project path="$PROJECT_DIR$/github-config-server" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/planner-entity" name="planner-entity">
+                <projects>
+                  <project path="$PROJECT_DIR$/planner-entity" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/planner_todo" name="planner_todo">
+                <projects>
+                  <project path="$PROJECT_DIR$/planner_todo" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -44,6 +54,8 @@
             <option value="$PROJECT_DIR$/eureka-client-2" />
             <option value="$PROJECT_DIR$/eureka-server" />
             <option value="$PROJECT_DIR$/github-config-server" />
+            <option value="$PROJECT_DIR$/planner-entity" />
+            <option value="$PROJECT_DIR$/planner_todo" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -60,6 +72,22 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/github-config-server" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/planner-entity" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/planner-entity" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/planner_todo" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/planner_todo" />
           </set>
         </option>
       </GradleProjectSettings>
