@@ -37,9 +37,14 @@
                   <project path="$PROJECT_DIR$/planner-entity" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/planner-todo" name="planner_todo">
+              <build path="$PROJECT_DIR$/planner-todo" name="planner-todo">
                 <projects>
                   <project path="$PROJECT_DIR$/planner-todo" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/planner-users" name="planner-users">
+                <projects>
+                  <project path="$PROJECT_DIR$/planner-users" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/planner-utils" name="planner-utils">
@@ -61,39 +66,16 @@
             <option value="$PROJECT_DIR$/github-config-server" />
             <option value="$PROJECT_DIR$/planner-entity" />
             <option value="$PROJECT_DIR$/planner-todo" />
+            <option value="$PROJECT_DIR$/planner-users" />
             <option value="$PROJECT_DIR$/planner-utils" />
           </set>
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/eureka-client-2" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/planner-users/planner-clients" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/eureka-client-2" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/github-config-server" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/github-config-server" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/planner-entity" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/planner-entity" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/planner-utils" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/planner-utils" />
+            <option value="$PROJECT_DIR$/planner-users/planner-clients" />
           </set>
         </option>
       </GradleProjectSettings>

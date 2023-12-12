@@ -14,7 +14,7 @@ import org.springframework.util.StopWatch;
 public class LoggingAspect {
 
     //аспект будет выполняться для всех методов из пакета контроллеров
-    @Around("execution(* ru.jb.micro.planner.todo.controller..*(..)))")
+    @Around("execution(* ru.jb.micro.planner..*(..)))")
     public Object profileControllerMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable
     {
 
