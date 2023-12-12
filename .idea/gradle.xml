@@ -37,9 +37,14 @@
                   <project path="$PROJECT_DIR$/planner-entity" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/planner_todo" name="planner_todo">
+              <build path="$PROJECT_DIR$/planner-todo" name="planner_todo">
                 <projects>
-                  <project path="$PROJECT_DIR$/planner_todo" />
+                  <project path="$PROJECT_DIR$/planner-todo" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/planner-utils" name="planner-utils">
+                <projects>
+                  <project path="$PROJECT_DIR$/planner-utils" />
                 </projects>
               </build>
             </builds>
@@ -55,7 +60,8 @@
             <option value="$PROJECT_DIR$/eureka-server" />
             <option value="$PROJECT_DIR$/github-config-server" />
             <option value="$PROJECT_DIR$/planner-entity" />
-            <option value="$PROJECT_DIR$/planner_todo" />
+            <option value="$PROJECT_DIR$/planner-todo" />
+            <option value="$PROJECT_DIR$/planner-utils" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -84,10 +90,10 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/planner_todo" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/planner-utils" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/planner_todo" />
+            <option value="$PROJECT_DIR$/planner-utils" />
           </set>
         </option>
       </GradleProjectSettings>

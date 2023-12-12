@@ -1,14 +1,15 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/fin
+    url: jdbc:postgresql://localhost:5432/planner_todo
     username: fin
     password: fin
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   application:
-    name: planner-entity
+    name: planner-todo
   config:
     import: configserver:http://localhost:8888
   profiles:
     active: micro
+
