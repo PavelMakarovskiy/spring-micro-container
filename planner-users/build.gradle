@@ -38,8 +38,8 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-aop:3.2.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
-    implementation('ru.jb.micro.planner:planner-entity')
-    implementation('ru.jb.micro.planner:planner-utils')
+    implementation ('ru.jb.micro.planner:planner-entity')
+    implementation ('ru.jb.micro.planner:planner-utils')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

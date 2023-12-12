@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
-
+public class UserMainController {
     @GetMapping("/get")
-    public ResponseEntity<String> getUser() {
+    public ResponseEntity<String> getCategory() {
         return ResponseEntity.ok("Lesia");
     }
 }

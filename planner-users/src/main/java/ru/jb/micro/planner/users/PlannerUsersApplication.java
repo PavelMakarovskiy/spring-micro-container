@@ -9,7 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {"ru.jb.micro.planner"})
 public class PlannerUsersApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(PlannerUsersApplication.class, args);
     }
+
 }
