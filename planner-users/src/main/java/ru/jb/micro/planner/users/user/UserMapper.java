@@ -1,4 +1,4 @@
-package ru.jb.micro.planner.entity.user;
+package ru.jb.micro.planner.users.user;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

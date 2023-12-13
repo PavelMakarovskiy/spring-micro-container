@@ -1,4 +1,4 @@
-package ru.jb.micro.planner.entity.user.subject;
+package ru.jb.micro.planner.entity.subject;
 
 
 import lombok.Getter;

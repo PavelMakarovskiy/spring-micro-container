@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/planner_todo
+    url: jdbc:postgresql://localhost:5432/fin
     username: fin
     password: fin
   jpa:
@@ -11,4 +11,4 @@ spring:
   config:
     import: configserver:http://localhost:8888
   profiles:
-    active: micro
+    active: micro, rabbit

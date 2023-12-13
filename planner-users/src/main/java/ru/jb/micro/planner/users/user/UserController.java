@@ -1,4 +1,4 @@
-package ru.jb.micro.planner.entity.user;
+package ru.jb.micro.planner.users.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
