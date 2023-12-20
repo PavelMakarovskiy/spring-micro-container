@@ -42,6 +42,11 @@
                   <project path="$PROJECT_DIR$/planner-todo" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/planner-users" name="planner-users">
+                <projects>
+                  <project path="$PROJECT_DIR$/planner-users" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/planner-utils" name="planner-utils">
                 <projects>
                   <project path="$PROJECT_DIR$/planner-utils" />
@@ -61,6 +66,7 @@
             <option value="$PROJECT_DIR$/github-config-server" />
             <option value="$PROJECT_DIR$/planner-entity" />
             <option value="$PROJECT_DIR$/planner-todo" />
+            <option value="$PROJECT_DIR$/planner-users" />
             <option value="$PROJECT_DIR$/planner-utils" />
           </set>
         </option>

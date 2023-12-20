@@ -12,3 +12,11 @@ spring:
     import: configserver:http://localhost:8888
   profiles:
     active: micro, rabbit
+  cloud:
+    function:
+      definition: newUserActionProduce
+    stream:
+      bindings:
+        newUserActionProduce-out-0:
+          destination: planner-dest
+
