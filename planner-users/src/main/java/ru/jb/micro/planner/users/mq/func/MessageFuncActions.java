@@ -5,7 +5,6 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Sinks;
 
-
 // работа с каналами
 @Service
 @Getter

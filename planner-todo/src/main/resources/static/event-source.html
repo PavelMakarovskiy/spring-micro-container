@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script>
+    let eventSource;
+
+    function start() { // Start is pushed
+        if (!window.EventSource) {
+            // Internet Explorer or older browsers
+            alert("Ваш браузер не поддерживает EventSource.");
+            return;
+        }
+
+        eventSource = new EventSource('digits');
+
+        eventSource.onopen = function(e) {
+            log("Event: open");
+        };
+
+        eventSource.onerror = function(e) {
+            log("Event: error");
+            if (this.readyState == EventSource.CONNECTING) {
+                log(`Reconnection (readyState=${this.readyState})...`);
+            } else {
+                log("Error occured.");
+            }
+        };
+
+        eventSource.addEventListener('bye', function(e) {
+            log("Event: bye, data: " + e.data);
+        });
+
+        eventSource.onmessage = function(e) {
+            log("Event: message, data: " + e.data);
+        };
+    }
+
+    function stop() { // когда нажата кнопка "Стоп"
+        eventSource.close();
+        log("Connection closed");
+    }
+
+    function log(msg) {
+        logElem.innerHTML += msg + "<br>";
+        document.documentElement.scrollTop = 99999999;
+    }
+</script>
+
+<button onclick="start()">Start</button> Push start
+<div id="logElem" style="margin: 6px 0"></div>
+
+<button onclick="stop()">Stop</button> Posh stop to end
