@@ -17,6 +17,7 @@ public enum Category {
     SECURITY("Information Security"),
     HIGH_LOAD("High load"),
     NETWORKS("Networks, protocols"),
+    POSTGRES("Postgres"),
     SOFT_SKILLS("Soft skills");
 
     private String description;

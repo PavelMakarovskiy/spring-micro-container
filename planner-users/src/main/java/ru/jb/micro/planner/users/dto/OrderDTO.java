@@ -7,9 +7,9 @@ import java.util.List;
 public class OrderDTO {
     private Long id;
 
-    private List<Category> categories;
-
     private Long user_id;
 
     private String user_name;
+    private List<Category> categories;
+
 }
