@@ -1,15 +1,15 @@
 package ru.jb.micro.planner.users.dto;
 
-import ru.jb.micro.planner.entity.category.Category;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class OrderDTO {
-    private Long id;
-
     private Long user_id;
-
     private String user_name;
-    private List<Category> categories;
+    private List<String> categories;
 
 }
