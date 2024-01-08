@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Sinks;
+import ru.jb.micro.planner.entity.order.Order;
 
 // работа с каналами
 @Service
@@ -12,9 +13,9 @@ import reactor.core.publisher.Sinks;
 public class MessageFuncActions {
 
     // каналы для обмена сообщениями
-    private MessageFunc messageFunc;
+    private MessageFuncProduce messageFunc;
 
-    public MessageFuncActions(MessageFunc messageFunc) {
+    public MessageFuncActions(MessageFuncProduce messageFunc) {
         this.messageFunc = messageFunc;
     }
 
@@ -23,5 +24,9 @@ public class MessageFuncActions {
         // добавляем в слушатель новое сообщение
         messageFunc.getInnerBus().emitNext(MessageBuilder.withPayload(id).build(), Sinks.EmitFailureHandler.FAIL_FAST);
         System.out.println("Message sent: " + id);
+    }
+
+    public void sendNewOrder(Order order) {
+        messageFunc.getInnerOrderBus().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 }

@@ -47,13 +47,5 @@ public class ToDoController {
         });
     }
 
-//    @GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-//    public Flux<ServerSentEvent<String>> streamFlux() {
-//        return Flux.just("1", "2", "3", "4", "5", "6", "7", "8", "9")
-//                .map(val -> ServerSentEvent.<String>builder()
-//                        .data(val)
-//                        .retry(Duration.ofMillis(1000))
-//                        .build())
-//                .delayElements(Duration.ofMillis(900));
-//    }
+
 }

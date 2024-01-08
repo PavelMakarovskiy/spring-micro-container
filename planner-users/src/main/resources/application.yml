@@ -14,9 +14,15 @@ spring:
     active: micro, rabbit
   cloud:
     function:
-      definition: newUserActionProduce
+      definition: newUserActionProduce;orderProduce;orderReadyConsume
     stream:
       bindings:
         newUserActionProduce-out-0:
           destination: planner-dest
+        orderProduce-out-0:
+          destination: planner-order
+          group: order
+        orderReadyConsume-in-0:
+          destination: planner-order-ready
+          group: order
 
