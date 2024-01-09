@@ -25,8 +25,7 @@ public class MessageFuncToDoConsume {
 
     private final OrderHandlerService orderHandlerService;
 
-    Logger log = LoggerFactory.getLogger(OrderHandlerService.class);
-    static ExecutorService executorService = Executors.newFixedThreadPool(3);
+    Logger log = LoggerFactory.getLogger(MessageFuncToDoConsume.class);
 
     private final MessageActionsToDo messageActionsToDo;
 
@@ -45,29 +44,41 @@ public class MessageFuncToDoConsume {
     @Bean
     public Consumer<Message<Order>> ordersConsume() {
         return message -> {
-            try {
-              //  orderHandlerService.executeOrder(message.getPayload());
-                CompletableFuture<Order> completableFuture = CompletableFuture.supplyAsync(() ->
-                {
-                    Order order = message.getPayload();
-                    int waitQty = order.getCategories().size();
-                    try {
-                        Thread.sleep(4000L * waitQty);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    log.info("Order № {} is in process", order.getId());
-                    return order;
-                }, executorService);
-                try {
-                    messageActionsToDo.sendReadyOrder(completableFuture.get());
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            Order order = message.getPayload();
+            orderHandlerService.getOrderQueue().add(order);
+            log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " added to queue.");
         };
     }
+
+//    @Bean
+//    public Consumer<Message<Order>> ordersConsume() {
+//        ExecutorService executorService = Executors.newFixedThreadPool(3);
+//        return message -> {
+//            try {
+//                Order order = message.getPayload();
+//                log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " started.");
+//                //  orderHandlerService.executeOrder(message.getPayload());
+//                CompletableFuture<Order> completableFuture = CompletableFuture.supplyAsync(() ->
+//                {
+//                    int waitQty = order.getCategories().size();
+//                    log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " " + Thread.currentThread().getName());
+//                    try {
+//                        Thread.sleep(4000L * waitQty);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    log.info("Order № {} is in process", order.getId());
+//                    return order;
+//                }, executorService);
+//                try {
+//                    messageActionsToDo.sendReadyOrder(completableFuture.get());
+//                } catch (ExecutionException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        };
+//    }
 
 }

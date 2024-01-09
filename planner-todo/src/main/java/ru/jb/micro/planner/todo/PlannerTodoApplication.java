@@ -4,14 +4,25 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
+import ru.jb.micro.planner.todo.service.OrderHandlerService;
+
+import java.util.concurrent.ExecutionException;
 
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {"ru.jb.micro.planner"})
 public class PlannerTodoApplication {
 
+    private static OrderHandlerService orderHandlerService;
+
+    public PlannerTodoApplication(OrderHandlerService orderHandlerService) {
+        PlannerTodoApplication.orderHandlerService = orderHandlerService;
+    }
+
     public static void main(String[] args) {
+
         SpringApplication.run(PlannerTodoApplication.class, args);
+        orderHandlerService.executeHandlingOrder();
     }
 
 }
