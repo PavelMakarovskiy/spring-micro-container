@@ -8,11 +8,6 @@ import org.springframework.messaging.Message;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.todo.service.DataService;
 import ru.jb.micro.planner.todo.service.OrderHandlerService;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 // spring считывает бины и создает соотв. каналы
@@ -25,14 +20,9 @@ public class MessageFuncToDoConsume {
 
     private final OrderHandlerService orderHandlerService;
 
-    Logger log = LoggerFactory.getLogger(MessageFuncToDoConsume.class);
-
-    private final MessageActionsToDo messageActionsToDo;
-
-    public MessageFuncToDoConsume(DataService dataService, OrderHandlerService orderHandlerService, MessageActionsToDo messageActionsToDo) {
+    public MessageFuncToDoConsume(DataService dataService, OrderHandlerService orderHandlerService) {
         this.dataService = dataService;
         this.orderHandlerService = orderHandlerService;
-        this.messageActionsToDo = messageActionsToDo;
     }
 
     // название метода должно совпадать с настройками definition и bindings в файлах properties (или yml)
@@ -43,22 +33,9 @@ public class MessageFuncToDoConsume {
 
     @Bean
     public Consumer<Message<Order>> ordersConsume() {
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
         return message -> {
-            CompletableFuture.runAsync(() ->
-            {
-                Order order = message.getPayload();
-                int waitQty = order.getCategories().size();
-                log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " " + Thread.currentThread().getName());
-                try {
-                    Thread.sleep(4000L * waitQty);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                log.info("Order № {} is ready to send", order.getId());
-                messageActionsToDo.sendReadyOrder(order);
-                log.info("Order № {} is sent", order.getId());
-            }, executorService);
+            Order order = message.getPayload();
+            orderHandlerService.executeHandlingOrder(order);
         };
     }
 
