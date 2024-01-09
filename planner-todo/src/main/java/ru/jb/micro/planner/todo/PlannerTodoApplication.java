@@ -13,16 +13,8 @@ import java.util.concurrent.ExecutionException;
 @ComponentScan(basePackages = {"ru.jb.micro.planner"})
 public class PlannerTodoApplication {
 
-    private static OrderHandlerService orderHandlerService;
-
-    public PlannerTodoApplication(OrderHandlerService orderHandlerService) {
-        PlannerTodoApplication.orderHandlerService = orderHandlerService;
-    }
-
     public static void main(String[] args) {
-
         SpringApplication.run(PlannerTodoApplication.class, args);
-        orderHandlerService.executeHandlingOrder();
     }
 
 }
