@@ -33,7 +33,7 @@ public class OrderHandlerService {
             int waitQty = order.getCategories().size();
             log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " " + Thread.currentThread().getName());
             try {
-                Thread.sleep(4000L * waitQty);
+                Thread.sleep(2000L * waitQty);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

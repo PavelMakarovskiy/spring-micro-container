@@ -2,8 +2,8 @@ package ru.jb.micro.planner.users.order;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.datafaker.Faker;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import ru.jb.micro.planner.entity.category.Category;
@@ -15,8 +15,10 @@ import ru.jb.micro.planner.users.user.UserMapper;
 import ru.jb.micro.planner.users.user.UserService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Getter
@@ -59,6 +61,27 @@ public class OrderServiceImpl implements OrderService {
         return subscriptionOrders;
     }
 
+    @Override
+    public void makeManyOrders(Long qty) {
+        Faker faker = new Faker();
+        for (int i = 0; i < qty; i++) {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setUser_name(faker.name().fullName());
+            orderDTO.setCategories(generateRandomCategories());
+            createOrder(orderDTO);
+        }
+    }
+
+    private List<String> generateRandomCategories() {
+        Set<String> categories = new HashSet<>();
+        int catMaxIdx = Category.values().length - 1;
+        int randomSum = (int) (Math.random() * (catMaxIdx - 1)) + 1;
+        for (int i = 0; i <= randomSum; i++) {
+            int randomValue = (int) (Math.random() * catMaxIdx);
+            categories.add(Category.values()[randomValue].name());
+        }
+        return categories.stream().toList();
+    }
 
     public void makeOrderResponse(Order readyOrder) {
         String userName = userService.getUserById(readyOrder.getUser_id()).get().getName();
@@ -94,4 +117,6 @@ public class OrderServiceImpl implements OrderService {
         }
         return orderDTO.getUser_id();
     }
+
+
 }

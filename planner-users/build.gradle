@@ -41,6 +41,7 @@ dependencies {
     implementation ('ru.jb.micro.planner:planner-entity')
     implementation ('ru.jb.micro.planner:planner-utils')
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:4.1.0'
+    implementation 'net.datafaker:datafaker:2.0.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

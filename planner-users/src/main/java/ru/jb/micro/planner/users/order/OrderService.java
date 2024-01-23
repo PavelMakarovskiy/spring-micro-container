@@ -14,4 +14,6 @@ public interface OrderService {
     void makeOrderResponse(Order order);
 
     List<SubscriptionReadyOrders> getSubscriptionOrders();
+
+    void makeManyOrders(Long qty);
 }

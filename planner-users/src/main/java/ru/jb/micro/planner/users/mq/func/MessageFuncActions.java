@@ -13,20 +13,20 @@ import ru.jb.micro.planner.entity.order.Order;
 public class MessageFuncActions {
 
     // каналы для обмена сообщениями
-    private MessageFuncProduce messageFunc;
+    private final MessageFuncProduce messageFuncProduce;
 
     public MessageFuncActions(MessageFuncProduce messageFunc) {
-        this.messageFunc = messageFunc;
+        this.messageFuncProduce = messageFunc;
     }
 
     // отправка сообщения
     public void sendNewUserMessage(Long id) {
         // добавляем в слушатель новое сообщение
-        messageFunc.getInnerBus().emitNext(MessageBuilder.withPayload(id).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+        messageFuncProduce.getInnerBus().emitNext(MessageBuilder.withPayload(id).build(), Sinks.EmitFailureHandler.FAIL_FAST);
         System.out.println("Message sent: " + id);
     }
 
     public void sendNewOrder(Order order) {
-        messageFunc.getInnerOrderBus().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+        messageFuncProduce.getInnerOrderBus().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 }

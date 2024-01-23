@@ -1,13 +1,12 @@
 package ru.jb.micro.planner.todo.mq.func;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.todo.service.DataService;
 import ru.jb.micro.planner.todo.service.OrderHandlerService;
+
 import java.util.function.Consumer;
 
 // spring считывает бины и создает соотв. каналы
