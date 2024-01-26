@@ -1,6 +1,7 @@
 package ru.jb.micro.planner.users.controller;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
@@ -30,16 +31,20 @@ public class OrderController {
     }
 
     @GetMapping(value = "/many_orders", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @SessionScope
     Flux<ServerSentEvent> requestManyOrders() {
-        System.out.println("Call faker.");
-        orderService.createFakeOrder();
         return Flux.create(fluxSink -> {
+            orderService.createFakeOrder();
+            System.out.println("Call faker.");
             SubscriptionReadyOrders readyOrders = new SubscriptionReadyOrders(fluxSink);
             orderService.getSubscriptionOrders().add(readyOrders);
             System.out.println("Added SubscriptionReadyOrders.");
         });
     }
+
+//    @GetMapping(value = "/fake_order")
+//    ResponseEntity<String> requestFakeOrder() {
+//
+//    }
 
 //    @GetMapping(value = "/many_orders")
 //    Integer requestManyOrders() {

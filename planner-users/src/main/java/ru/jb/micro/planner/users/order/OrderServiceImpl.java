@@ -69,11 +69,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createFakeOrder() {
-        Faker faker = new Faker();
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setUser_name(faker.name().fullName());
-        orderDTO.setCategories(generateRandomCategories());
-        createOrder(orderDTO);
+        for (int i = 0; i < 20; i++) {
+            Faker faker = new Faker();
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setUser_name(faker.name().fullName());
+            orderDTO.setCategories(generateRandomCategories());
+            createOrder(orderDTO);
+        }
     }
 
     private List<String> generateRandomCategories() {
