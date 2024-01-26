@@ -15,5 +15,5 @@ public interface OrderService {
 
     List<SubscriptionReadyOrders> getSubscriptionOrders();
 
-    void makeManyOrders(Long qty);
+    void createFakeOrder();
 }

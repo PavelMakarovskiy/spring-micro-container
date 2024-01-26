@@ -2,6 +2,7 @@ package ru.jb.micro.planner.users.order;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 import net.datafaker.Faker;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.codec.ServerSentEvent;
@@ -23,6 +24,7 @@ import java.util.Set;
 @Service
 @Getter
 @Setter
+@Log
 public class OrderServiceImpl implements OrderService {
 
     private final UserMapper userMapper;
@@ -47,12 +49,16 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(OrderDTO orderDTO) {
         Long userId = addNewUser(orderDTO);
         Optional<User> user = userMapper.getUserById(userId);
+
         Long orderId = orderMapper.addOrder(user.get().getId());
         orderDTO.getCategories().stream()
                 .map(val -> Category.valueOf(val))
                 .forEach(cat -> orderMapper.addOrderCategories(orderId, cat));
         if (getOrderById(orderId).isPresent()) {
+            Order currentOrder = getOrderById(orderId).get();
+            log.info("Order " + currentOrder.getId() + " for " + "user " + userMapper.getUserById(currentOrder.getUser_id()).get().getName() + " created.");
             messageFuncActions.sendNewOrder(getOrderById(orderId).get());
+            log.info("Order " + currentOrder.getId() + " for " + "user " + userMapper.getUserById(currentOrder.getUser_id()).get().getName() + " has sent for handling.");
         }
     }
 
@@ -62,14 +68,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void makeManyOrders(Long qty) {
+    public void createFakeOrder() {
         Faker faker = new Faker();
-        for (int i = 0; i < qty; i++) {
-            OrderDTO orderDTO = new OrderDTO();
-            orderDTO.setUser_name(faker.name().fullName());
-            orderDTO.setCategories(generateRandomCategories());
-            createOrder(orderDTO);
-        }
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setUser_name(faker.name().fullName());
+        orderDTO.setCategories(generateRandomCategories());
+        createOrder(orderDTO);
     }
 
     private List<String> generateRandomCategories() {
@@ -96,7 +100,9 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         subscriptionOrders.forEach((subscription) ->
-                subscription.getFluxSink().next(event));
+                subscription.getFluxSink().next(event)
+        );
+        log.info("Order " + readyOrder.getId() + " for " + "user " + userMapper.getUserById(readyOrder.getUser_id()).get().getName() + " is ready and sent as event to subscription orders.");
     }
 
     @NotNull
