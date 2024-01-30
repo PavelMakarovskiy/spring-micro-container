@@ -1,6 +1,7 @@
 package ru.jb.micro.planner.users.order;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.users.dto.OrderDTO;
 
@@ -13,7 +14,11 @@ public interface OrderService {
 
     void makeOrderResponse(Order order);
 
-    List<SubscriptionReadyOrders> getSubscriptionOrders();
+    List<SubscriptionReadySSEOrder> getSubscriptionSSEOrders();
+
+    List<SubscriptionReadyOrder> getSubscriptionReadyOrders();
 
     void createFakeOrder();
+
+    Flux<String> createPersonalFakeOrder();
 }

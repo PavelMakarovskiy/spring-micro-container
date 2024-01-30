@@ -1,18 +1,17 @@
 package ru.jb.micro.planner.users.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.context.annotation.SessionScope;
 import reactor.core.publisher.Flux;
 import ru.jb.micro.planner.users.dto.OrderDTO;
 import ru.jb.micro.planner.users.order.OrderService;
-import ru.jb.micro.planner.users.order.SubscriptionReadyOrders;
+import ru.jb.micro.planner.users.order.SubscriptionReadySSEOrder;
 
 @RestController
 @RequestMapping("/orders")
+@Log
 public class OrderController {
 
     private final OrderService orderService;
@@ -25,26 +24,27 @@ public class OrderController {
     Flux<ServerSentEvent> requestOrder(@RequestBody OrderDTO orderDTO) {
         orderService.createOrder(orderDTO);
         return Flux.create(fluxSink -> {
-            SubscriptionReadyOrders readyOrders = new SubscriptionReadyOrders(fluxSink);
-            orderService.getSubscriptionOrders().add(readyOrders);
+            SubscriptionReadySSEOrder readyOrders = new SubscriptionReadySSEOrder(fluxSink);
+            orderService.getSubscriptionSSEOrders().add(readyOrders);
         });
     }
 
     @GetMapping(value = "/many_orders", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<ServerSentEvent> requestManyOrders() {
         return Flux.create(fluxSink -> {
-            orderService.createFakeOrder();
-            System.out.println("Call faker.");
-            SubscriptionReadyOrders readyOrders = new SubscriptionReadyOrders(fluxSink);
-            orderService.getSubscriptionOrders().add(readyOrders);
+//            orderService.createFakeOrder();
+//            System.out.println("Call faker.");
+            SubscriptionReadySSEOrder readyOrders = new SubscriptionReadySSEOrder(fluxSink);
+            orderService.getSubscriptionSSEOrders().add(readyOrders);
             System.out.println("Added SubscriptionReadyOrders.");
         });
     }
 
-//    @GetMapping(value = "/fake_order")
-//    ResponseEntity<String> requestFakeOrder() {
-//
-//    }
+    @GetMapping(value = "/fake_order")
+    String requestPersonalFakeOrder() {
+        log.info("Call personal fake order.");
+        return orderService.createPersonalFakeOrder().blockFirst();
+    }
 
 //    @GetMapping(value = "/many_orders")
 //    Integer requestManyOrders() {

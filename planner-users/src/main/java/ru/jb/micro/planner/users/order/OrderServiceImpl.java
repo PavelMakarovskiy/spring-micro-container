@@ -7,6 +7,8 @@ import net.datafaker.Faker;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import ru.jb.micro.planner.entity.category.Category;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.users.dto.OrderDTO;
@@ -16,8 +18,10 @@ import ru.jb.micro.planner.users.user.UserMapper;
 import ru.jb.micro.planner.users.user.UserService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,7 +39,9 @@ public class OrderServiceImpl implements OrderService {
 
     private final UserService userService;
 
-    List<SubscriptionReadyOrders> subscriptionOrders = new ArrayList<>();
+    List<SubscriptionReadySSEOrder> subscriptionSSEReadyOrders = new ArrayList<>();
+
+    List<SubscriptionReadyOrder> subscriptionReadyOrders = new ArrayList<>();
 
 
     public OrderServiceImpl(UserMapper userMapper, OrderMapper orderMapper, MessageFuncActions messageFuncActions, UserService userService) {
@@ -63,19 +69,48 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<SubscriptionReadyOrders> getSubscriptionOrders() {
-        return subscriptionOrders;
+    public List<SubscriptionReadySSEOrder> getSubscriptionSSEOrders() {
+        return subscriptionSSEReadyOrders;
     }
+
 
     @Override
     public void createFakeOrder() {
-        for (int i = 0; i < 20; i++) {
-            Faker faker = new Faker();
-            OrderDTO orderDTO = new OrderDTO();
-            orderDTO.setUser_name(faker.name().fullName());
-            orderDTO.setCategories(generateRandomCategories());
-            createOrder(orderDTO);
-        }
+        Faker faker = new Faker();
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setUser_name(faker.name().fullName());
+        orderDTO.setCategories(generateRandomCategories());
+        createOrder(orderDTO);
+    }
+
+    @Override
+    public Flux<String> createPersonalFakeOrder() {
+        Faker faker = new Faker();
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setUser_name(faker.name().fullName());
+        orderDTO.setCategories(generateRandomCategories());
+
+        Long userId = addNewUser(orderDTO);
+        Optional<User> user = userMapper.getUserById(userId);
+
+        Long orderId = orderMapper.addOrder(user.get().getId());
+        orderDTO.getCategories().stream()
+                .map(val -> Category.valueOf(val))
+                .forEach(cat -> orderMapper.addOrderCategories(orderId, cat));
+
+        return Flux.create(fluxSink -> {
+            if (getOrderById(orderId).isPresent()) {
+                Order currentOrder = getOrderById(orderId).get();
+                log.info("Order " + currentOrder.getId() + " for " + "user " + userMapper.getUserById(currentOrder.getUser_id()).get().getName() + " created.");
+                Map<Long, FluxSink<String>> map = new HashMap<>();
+                map.put(orderId, fluxSink);
+                SubscriptionReadyOrder readyOrder = new SubscriptionReadyOrder(map);
+                subscriptionReadyOrders.add(readyOrder);
+                log.info("Subscription for order id #: " + orderId);
+                messageFuncActions.sendNewOrder(getOrderById(orderId).get());
+                log.info("Order " + currentOrder.getId() + " for " + "user " + userMapper.getUserById(currentOrder.getUser_id()).get().getName() + " has sent for handling.");
+            }
+        });
     }
 
     private List<String> generateRandomCategories() {
@@ -98,11 +133,24 @@ public class OrderServiceImpl implements OrderService {
                 .concat(" with categories: ")
                 .concat(sb.substring(0, sb.length() - 2))
                 .concat(" is ready.");
+
         ServerSentEvent<String> event = ServerSentEvent.builder(result)
                 .build();
 
-        subscriptionOrders.forEach((subscription) ->
-                subscription.getFluxSink().next(event)
+        subscriptionReadyOrders.forEach((subscription) -> {
+                    Map<Long, FluxSink<String>> map = subscription.getMapFluxSinkReadyOrders();
+                    if (map != null) {
+                        FluxSink<String> fluxSink = map.get(readyOrder.getId());
+                        if (fluxSink != null) {
+                            fluxSink.next(result);
+                        }
+                    }
+                }
+        );
+        log.info("Order " + readyOrder.getId() + " for " + "user " + userMapper.getUserById(readyOrder.getUser_id()).get().getName() + " is ready and sent as personal order.");
+
+        subscriptionSSEReadyOrders.forEach((subscription) ->
+                subscription.getFluxSinkSSEOrder().next(event)
         );
         log.info("Order " + readyOrder.getId() + " for " + "user " + userMapper.getUserById(readyOrder.getUser_id()).get().getName() + " is ready and sent as event to subscription orders.");
     }
