@@ -10,7 +10,7 @@ public class OrderHandlerThread implements Callable<Order> {
 
     Logger log = LoggerFactory.getLogger(OrderHandlerThread.class);
 
-    private Order order;
+    private final Order order;
 
     public OrderHandlerThread(Order order) {
         this.order = order;

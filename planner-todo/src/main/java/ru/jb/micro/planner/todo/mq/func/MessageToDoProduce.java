@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 @Getter
 public class MessageToDoProduce {
 
-    private Sinks.Many<Message<Order>> orderReadyBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    private final Sinks.Many<Message<Order>> orderReadyBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
     @Bean
     public Supplier<Flux<Message<Order>>> orderReadyProduce() {

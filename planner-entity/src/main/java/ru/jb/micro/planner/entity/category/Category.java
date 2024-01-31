@@ -20,7 +20,7 @@ public enum Category {
     POSTGRES("Postgres"),
     SOFT_SKILLS("Soft skills");
 
-    private String description;
+    private final String description;
 
     Category(String description) {
         this.description = description;

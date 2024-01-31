@@ -18,7 +18,7 @@ public interface OrderService {
 
     List<SubscriptionReadyOrder> getSubscriptionReadyOrders();
 
-    void createFakeOrder();
+    Long createFakeOrder();
 
     Flux<String> createPersonalFakeOrder();
 }

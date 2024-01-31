@@ -19,9 +19,9 @@ public class MessageFuncProduce {
 
     // для того, чтобы считывать данные по требованию (а не постоянно) - создаем поток, откуда данные будут отправляться уже в канал SCS
     // будем исп внутреннюю шину, из которой будут отправляться сообщения в канал SCS (по требованию)
-    private Sinks.Many<Message<Long>> innerBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    private final Sinks.Many<Message<Long>> innerBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
-    private Sinks.Many<Message<Order>> innerOrderBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    private final Sinks.Many<Message<Order>> innerOrderBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
     // отправляет в канал id пользователя, для которого нужно создать тестовые данные
     // название метода должно совпадать с настройками definition и bindings в файлах properties (или yml)

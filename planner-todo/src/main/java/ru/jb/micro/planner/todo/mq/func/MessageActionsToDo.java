@@ -10,7 +10,7 @@ import ru.jb.micro.planner.entity.order.Order;
 @Getter
 public class MessageActionsToDo {
 
-    private MessageToDoProduce messageToDoProduce;
+    private final MessageToDoProduce messageToDoProduce;
 
     public MessageActionsToDo(MessageToDoProduce messageToDoProduce) {
         this.messageToDoProduce = messageToDoProduce;
