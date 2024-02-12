@@ -1,6 +1,9 @@
 package ru.jb.micro.planner.users.controller;
 
+import com.netflix.discovery.EurekaClient;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
@@ -15,9 +18,13 @@ import ru.jb.micro.planner.users.order.SubscriptionReadySSEOrder;
 @Log
 public class OrderController {
 
+    private final EurekaClient eurekaClient;
+
     private final OrderService orderService;
 
-    public OrderController(OrderService orderService) {
+    @Autowired
+    public OrderController(EurekaClient eurekaClient, OrderService orderService) {
+        this.eurekaClient = eurekaClient;
         this.orderService = orderService;
     }
 
@@ -33,7 +40,7 @@ public class OrderController {
     @GetMapping(value = "/many_orders", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<ServerSentEvent> requestManyOrders() {
         return Flux.create(fluxSink -> {
-            log.info("Call many_orders.");
+            log.info("Call many_orders. Service id " + eurekaClient.getApplicationInfoManager().getInfo().getInstanceId() + " is working.");
             SubscriptionReadySSEOrder readyOrders = new SubscriptionReadySSEOrder(fluxSink);
             orderService.getSubscriptionSSEOrders().add(readyOrders);
             System.out.println("Added SubscriptionReadyOrders.");
@@ -42,7 +49,7 @@ public class OrderController {
 
     @GetMapping(value = "/fake_order")
     ResponseEntity<String> requestPersonalFakeOrder() {
-        log.info("Call personal fake order.");
+        log.info("Call personal fake order. Service id " + eurekaClient.getApplicationInfoManager().getInfo().getInstanceId() + " is working.");
         return ResponseEntity.ok(orderService.createPersonalFakeOrder().blockFirst());
     }
 
