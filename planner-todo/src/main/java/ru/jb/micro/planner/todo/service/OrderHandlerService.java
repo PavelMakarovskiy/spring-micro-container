@@ -40,7 +40,7 @@ public class OrderHandlerService {
             log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " " + Thread.currentThread().getName());
             try {
                 Thread.sleep(2000L * waitQty);
-              //  Thread.sleep(1000);
+                //  Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

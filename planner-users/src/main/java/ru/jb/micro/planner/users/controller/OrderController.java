@@ -3,7 +3,6 @@ package ru.jb.micro.planner.users.controller;
 import com.netflix.discovery.EurekaClient;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
