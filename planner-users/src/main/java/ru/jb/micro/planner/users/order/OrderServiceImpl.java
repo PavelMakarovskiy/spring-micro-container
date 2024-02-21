@@ -7,10 +7,12 @@ import net.datafaker.Faker;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import ru.jb.micro.planner.entity.category.Category;
 import ru.jb.micro.planner.entity.order.Order;
+import ru.jb.micro.planner.entity.order.OrderStatus;
 import ru.jb.micro.planner.users.dto.OrderDTO;
 import ru.jb.micro.planner.users.mq.func.MessageFuncActions;
 import ru.jb.micro.planner.users.user.User;
@@ -56,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
         Long userId = addNewUser(orderDTO);
         Optional<User> optionalUser = userMapper.getUserById(userId);
         if (optionalUser.isPresent()) {
-            Long orderId = orderMapper.addOrder(optionalUser.get().getId());
+            Long orderId = orderMapper.addOrder(optionalUser.get().getId(), OrderStatus.IN_PROGRESS);
             createOrderCategoriesRelation(orderDTO, orderId);
             Optional<Order> optionalOrder = getOrderByIdWithCategories(orderId);
             if (optionalOrder.isPresent()) {
@@ -80,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setUser_name(faker.name().fullName());
         orderDTO.setCategories(generateRandomCategories());
         Long userId = addNewUser(orderDTO);
-        Long orderId = orderMapper.addOrder(userId);
+        Long orderId = orderMapper.addOrder(userId, OrderStatus.IN_PROGRESS);
         createOrderCategoriesRelation(orderDTO, orderId);
         return orderId;
     }
@@ -107,6 +109,24 @@ public class OrderServiceImpl implements OrderService {
             }
         });
     }
+
+    @Override
+    public void createWsFakeOrder(WebSocketSession wsSession) {
+        Map<Order, WebSocketSession> map = new HashMap<>();
+        Long orderId = createFakeOrder();
+        Optional<Order> optionalOrder = getOrderByIdWithCategories(orderId);
+        if (optionalOrder.isPresent()) {
+            Order currentOrder = optionalOrder.get();
+            map.put(currentOrder, wsSession);
+            Optional<User> optionalUser = userMapper.getUserById(currentOrder.getUser_id());
+            if (optionalUser.isPresent()) {
+                User currentUser = optionalUser.get();
+                log.info("Order " + currentOrder.getId() + " for " + "user " + currentUser.getName() + " created.");
+                messageFuncActions.sendNewWsOrder(map);
+            }
+        }
+    }
+
 
     private void createOrderCategoriesRelation(OrderDTO orderDTO, Long orderId) {
         orderDTO.getCategories().stream().map(val -> Category.valueOf(val)).forEach(cat -> orderMapper.addOrderCategories(orderId, cat));

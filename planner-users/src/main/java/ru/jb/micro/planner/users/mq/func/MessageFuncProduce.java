@@ -6,11 +6,13 @@ import lombok.Getter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.web.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
 import ru.jb.micro.planner.entity.order.Order;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 @Configuration // spring reads beans and create channels
@@ -23,6 +25,8 @@ public class MessageFuncProduce {
 
     private final Sinks.Many<Message<Order>> innerOrderBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
+    private final Sinks.Many<Message<Map<Order, WebSocketSession>>> wsOrderBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+
     // отправляет в канал id пользователя, для которого нужно создать тестовые данные
     // название метода должно совпадать с настройками definition и bindings в файлах properties (или yml)
     @Bean
@@ -33,5 +37,10 @@ public class MessageFuncProduce {
     @Bean
     public Supplier<Flux<Message<Order>>> orderProduce() {
         return () -> innerOrderBus.asFlux();
+    }
+
+    @Bean
+    public Supplier<Flux<Message<Map<Order, WebSocketSession>>>> wsOrderProduce() {
+        return () -> wsOrderBus.asFlux();
     }
 }

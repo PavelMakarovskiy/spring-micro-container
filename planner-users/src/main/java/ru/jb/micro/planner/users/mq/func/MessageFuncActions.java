@@ -3,8 +3,11 @@ package ru.jb.micro.planner.users.mq.func;
 import lombok.Getter;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 import reactor.core.publisher.Sinks;
 import ru.jb.micro.planner.entity.order.Order;
+
+import java.util.Map;
 
 // работа с каналами
 @Service
@@ -28,5 +31,9 @@ public class MessageFuncActions {
 
     public void sendNewOrder(Order order) {
         messageFuncProduce.getInnerOrderBus().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+    }
+
+    public void sendNewWsOrder(Map<Order, WebSocketSession> map) {
+        messageFuncProduce.getWsOrderBus().emitNext(MessageBuilder.withPayload(map).build(), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 }

@@ -4,14 +4,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import ru.jb.micro.planner.users.mq.func.MessageFuncConsume;
+import ru.jb.micro.planner.users.order.OrderService;
 import ru.jb.micro.planner.websocket.WebSocketHandler;
 
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
+    private final OrderService orderService;
+    private final MessageFuncConsume messageFuncConsume;
+
+    public WebSocketConfig(OrderService orderService, MessageFuncConsume messageFuncConsume) {
+        this.orderService = orderService;
+        this.messageFuncConsume = messageFuncConsume;
+    }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/websocket")
+        registry.addHandler(new WebSocketHandler(orderService, messageFuncConsume), "/websocket")
                 .setAllowedOrigins("*");
     }
 }

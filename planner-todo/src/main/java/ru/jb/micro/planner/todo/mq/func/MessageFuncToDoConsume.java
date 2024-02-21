@@ -3,10 +3,12 @@ package ru.jb.micro.planner.todo.mq.func;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.web.socket.WebSocketSession;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.todo.service.DataService;
 import ru.jb.micro.planner.todo.service.OrderHandlerService;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 // spring считывает бины и создает соотв. каналы
@@ -36,6 +38,11 @@ public class MessageFuncToDoConsume {
             Order order = message.getPayload();
             orderHandlerService.executeHandlingOrder(order);
         };
+    }
+
+    @Bean
+    public Consumer<Message<Map<Order, WebSocketSession>>> wsOrdersConsume() {
+        return message -> orderHandlerService.executeHandlingWsOrder(message.getPayload());
     }
 
 }

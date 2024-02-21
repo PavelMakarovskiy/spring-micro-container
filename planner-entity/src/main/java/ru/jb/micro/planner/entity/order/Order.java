@@ -15,4 +15,6 @@ public class Order {
     private List<Category> categories;
 
     private Long user_id;
+
+    private OrderStatus status;
 }

@@ -1,6 +1,7 @@
 package ru.jb.micro.planner.users.order;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.users.dto.OrderDTO;
@@ -21,4 +22,7 @@ public interface OrderService {
     Long createFakeOrder();
 
     Flux<String> createPersonalFakeOrder();
+
+    void createWsFakeOrder(WebSocketSession wsSession);
+
 }
