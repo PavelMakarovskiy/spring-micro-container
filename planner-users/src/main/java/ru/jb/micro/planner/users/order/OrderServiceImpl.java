@@ -45,6 +45,8 @@ public class OrderServiceImpl implements OrderService {
 
     List<SubscriptionReadyOrder> subscriptionReadyOrders = new ArrayList<>();
 
+    Map<Long, WebSocketSession> wsMap = new HashMap<>();
+
 
     public OrderServiceImpl(UserMapper userMapper, OrderMapper orderMapper, MessageFuncActions messageFuncActions, UserService userService) {
         this.userMapper = userMapper;
@@ -64,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
             if (optionalOrder.isPresent()) {
                 Order currentOrder = optionalOrder.get();
                 log.info("Order " + currentOrder.getId() + " for " + "user " + optionalUser.get().getName() + " created.");
-                messageFuncActions.sendNewOrder(currentOrder);
+                messageFuncActions.sendNewOrderUserSide(currentOrder);
                 log.info("Order " + currentOrder.getId() + " for " + "user " + optionalUser.get().getName() + " has sent for handling.");
             }
         }
@@ -103,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
                     SubscriptionReadyOrder subscriptionReadyOrder = new SubscriptionReadyOrder(map);
                     subscriptionReadyOrders.add(subscriptionReadyOrder);
                     log.info("Subscription for order id #: " + orderId);
-                    messageFuncActions.sendNewOrder(optionalOrder.get());
+                    messageFuncActions.sendNewOrderUserSide(optionalOrder.get());
                     log.info("Order " + currentOrder.getId() + " for " + "user " + currentUser.getName() + " has sent for handling.");
                 }
             }
@@ -112,21 +114,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createWsFakeOrder(WebSocketSession wsSession) {
-        Map<Order, WebSocketSession> map = new HashMap<>();
         Long orderId = createFakeOrder();
         Optional<Order> optionalOrder = getOrderByIdWithCategories(orderId);
         if (optionalOrder.isPresent()) {
             Order currentOrder = optionalOrder.get();
-            map.put(currentOrder, wsSession);
+            wsMap.put(currentOrder.getId(), wsSession);
             Optional<User> optionalUser = userMapper.getUserById(currentOrder.getUser_id());
             if (optionalUser.isPresent()) {
                 User currentUser = optionalUser.get();
                 log.info("Order " + currentOrder.getId() + " for " + "user " + currentUser.getName() + " created.");
-                messageFuncActions.sendNewWsOrder(map);
+                messageFuncActions.sendNewWsOrderUserSide(currentOrder);
             }
         }
     }
-
 
     private void createOrderCategoriesRelation(OrderDTO orderDTO, Long orderId) {
         orderDTO.getCategories().stream().map(val -> Category.valueOf(val)).forEach(cat -> orderMapper.addOrderCategories(orderId, cat));
@@ -172,8 +172,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @NotNull
-    private Optional<Order> getOrderByIdWithCategories(Long orderId) {
-        Optional<Order> optionalOrder = orderMapper.getOrderAndUserInfoById(orderId);
+    public Optional<Order> getOrderByIdWithCategories(Long orderId) {
+        Optional<Order> optionalOrder = orderMapper.getOrderAndUserAndStatusInfoById(orderId);
         optionalOrder.ifPresent(order -> order.setCategories(orderMapper.getCategoriesByOrderId(orderId)));
         return optionalOrder;
     }
@@ -188,6 +188,11 @@ public class OrderServiceImpl implements OrderService {
             return userMapper.addUser(new User(orderDTO.getUser_name()));
         }
         return orderDTO.getUser_id();
+    }
+
+    @Override
+    public void updateOrderStatus(Order order) {
+        orderMapper.updateOrderStatus(order.getId(), order.getStatus());
     }
 
 }

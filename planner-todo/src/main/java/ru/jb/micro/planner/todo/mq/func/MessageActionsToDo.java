@@ -19,11 +19,11 @@ public class MessageActionsToDo {
         this.messageToDoProduce = messageToDoProduce;
     }
 
-    public void sendReadyOrder(Order order) {
-        messageToDoProduce.getOrderReadyBus().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+    public void sendReadyOrderToDoSide(Order order) {
+        messageToDoProduce.getOrderReadyBusToDoSide().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 
-    public void sendWsOrderInfo(Map<Order, WebSocketSession> map) {
-        messageToDoProduce.getWsOrderBus().emitNext(MessageBuilder.withPayload(map).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+    public void sendReadyWsOrderToDoSide(Order order) {
+        messageToDoProduce.getWsOrderBusToDoSide().emitNext(MessageBuilder.withPayload(order).build(), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 }

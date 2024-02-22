@@ -14,22 +14,22 @@ spring:
     active: micro, rabbit
   cloud:
     function:
-      definition: newUserActionConsume;ordersConsume;wsOrdersConsume;orderReadyProduce;wsOrderProduce
+      definition: newUserActionConsume;ordersConsumeToDoSide;wsOrdersConsumeToDoSide;orderReadyProduceToDoSide;wsOrdersProduceToDoSide
     stream:
       bindings:
         newUserActionConsume-in-0:
           destination: planner-dest
           group: planner-group
-        ordersConsume-in-0:
+        ordersConsumeToDoSide-in-0:
           destination: planner-order
           group: order
-        wsOrdersConsume-in-0:
+        wsOrdersConsumeToDoSide-in-0:
             destination: planner-ws-order
             group: order
-        orderReadyProduce-out-0:
+        orderReadyProduceToDoSide-out-0:
           destination: planner-order-ready
           group: order
-        wsOrderProduce-out-0:
-          destination: planner-ws-order
+        wsOrdersProduceToDoSide-out-0:
+          destination: planner-ws-order-ready
           group: order
 

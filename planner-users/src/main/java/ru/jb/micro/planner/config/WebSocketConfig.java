@@ -12,16 +12,14 @@ import ru.jb.micro.planner.websocket.WebSocketHandler;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     private final OrderService orderService;
-    private final MessageFuncConsume messageFuncConsume;
 
-    public WebSocketConfig(OrderService orderService, MessageFuncConsume messageFuncConsume) {
+    public WebSocketConfig(OrderService orderService) {
         this.orderService = orderService;
-        this.messageFuncConsume = messageFuncConsume;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(orderService, messageFuncConsume), "/websocket")
+        registry.addHandler(new WebSocketHandler(orderService), "/websocket")
                 .setAllowedOrigins("*");
     }
 }

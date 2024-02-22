@@ -17,17 +17,17 @@ import java.util.function.Supplier;
 @Getter
 public class MessageToDoProduce {
 
-    private final Sinks.Many<Message<Order>> orderReadyBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    private final Sinks.Many<Message<Order>> orderReadyBusToDoSide = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
-    private final Sinks.Many<Message<Map<Order, WebSocketSession>>> wsOrderBus = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    private final Sinks.Many<Message<Order>> wsOrderBusToDoSide = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
     @Bean
-    public Supplier<Flux<Message<Order>>> orderReadyProduce() {
-        return () -> orderReadyBus.asFlux();
+    public Supplier<Flux<Message<Order>>> orderReadyProduceToDoSide() {
+        return () -> orderReadyBusToDoSide.asFlux();
     }
 
     @Bean
-    public Supplier<Flux<Message<Map<Order, WebSocketSession>>>> wsOrdersProduce() {
-        return () -> wsOrderBus.asFlux();
+    public Supplier<Flux<Message<Order>>> wsOrdersProduceToDoSide() {
+        return () -> wsOrderBusToDoSide.asFlux();
     }
 }

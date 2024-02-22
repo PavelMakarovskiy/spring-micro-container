@@ -7,6 +7,8 @@ import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.users.dto.OrderDTO;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public interface OrderService {
@@ -25,4 +27,9 @@ public interface OrderService {
 
     void createWsFakeOrder(WebSocketSession wsSession);
 
+    Map<Long, WebSocketSession> getWsMap();
+
+    void updateOrderStatus(Order order);
+
+    Optional<Order> getOrderByIdWithCategories(Long orderId);
 }

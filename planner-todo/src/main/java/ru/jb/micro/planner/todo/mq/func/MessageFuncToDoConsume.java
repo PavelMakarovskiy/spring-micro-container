@@ -1,14 +1,14 @@
 package ru.jb.micro.planner.todo.mq.func;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
-import org.springframework.web.socket.WebSocketSession;
 import ru.jb.micro.planner.entity.order.Order;
 import ru.jb.micro.planner.todo.service.DataService;
 import ru.jb.micro.planner.todo.service.OrderHandlerService;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 // spring считывает бины и создает соотв. каналы
@@ -16,6 +16,8 @@ import java.util.function.Consumer;
 // этот способ - рекомендуемый, вместо старого способа (@Binding, интерфейсы)
 @Configuration
 public class MessageFuncToDoConsume {
+
+    Logger log = LoggerFactory.getLogger(MessageFuncToDoConsume.class);
 
     private final DataService dataService;
 
@@ -33,7 +35,7 @@ public class MessageFuncToDoConsume {
     }
 
     @Bean
-    public Consumer<Message<Order>> ordersConsume() {
+    public Consumer<Message<Order>> ordersConsumeToDoSide() {
         return message -> {
             Order order = message.getPayload();
             orderHandlerService.executeHandlingOrder(order);
@@ -41,8 +43,12 @@ public class MessageFuncToDoConsume {
     }
 
     @Bean
-    public Consumer<Message<Map<Order, WebSocketSession>>> wsOrdersConsume() {
-        return message -> orderHandlerService.executeHandlingWsOrder(message.getPayload());
+    public Consumer<Message<Order>> wsOrdersConsumeToDoSide() {
+        log.info("Called wsOrdersConsumeToDoSide.");
+        return message -> {
+            log.info("WsOrdersConsumeToDoSide got internal order #{} for handling.", message.getPayload().getId());
+            orderHandlerService.executeHandlingWsOrder(message.getPayload());
+        };
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface OrderMapper {
 
     @Select("SELECT * FROM ORDERS WHERE id = #{id}")
-    Optional<Order> getOrderAndUserInfoById(@Param("id") Long id);
+    Optional<Order> getOrderAndUserAndStatusInfoById(@Param("id") Long id);
 
     @Select("select oc.category as category from orders o inner join orders_categories oc on o.id = oc.order_id where o.id = #{id}")
     List<Category> getCategoriesByOrderId(@Param("id") Long id);
@@ -22,4 +22,8 @@ public interface OrderMapper {
 
     @Insert("Insert into orders_categories (order_id, category) values (#{order_id}, #{category})")
     void addOrderCategories(@Param("order_id") Long order_id, @Param("category") Category category);
+
+    @Update("update orders set status = #{status} where id = #{order_id}")
+    void updateOrderStatus(@Param("order_id") Long order_id, @Param("status") OrderStatus status);
+
 }
