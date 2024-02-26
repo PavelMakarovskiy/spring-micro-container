@@ -24,8 +24,8 @@ spring:
           destination: planner-order
           group: order
         wsOrdersConsumeToDoSide-in-0:
-            destination: planner-ws-order
-            group: order
+          destination: planner-ws-order
+          group: order
         orderReadyProduceToDoSide-out-0:
           destination: planner-order-ready
           group: order

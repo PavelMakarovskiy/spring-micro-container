@@ -11,7 +11,5 @@ import org.springframework.context.annotation.ComponentScan;
 public class PlannerUsersApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PlannerUsersApplication.class, args);
-    }
-
+        SpringApplication.run(PlannerUsersApplication.class, args);}
 }
