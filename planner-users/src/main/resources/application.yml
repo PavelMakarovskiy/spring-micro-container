@@ -22,18 +22,25 @@ spring:
         orderUserSideProduce-out-0:
           destination: planner-order
           group: order
+          error-handler-definition: myErrorHandler
         wsOrdersUserSideProduce-out-0:
           destination: planner-ws-order
           group: order
+          error-handler-definition: myErrorHandler
         orderReadyUserSideConsume-in-0:
           destination: planner-order-ready
           group: order
+          error-handler-definition: myErrorHandler
         wsOrdersUserSideConsume-in-0:
           destination: planner-ws-order-ready
           group: order1
+          error-handler-definition: myErrorHandler
         wsAdvOrdersUserSideConsume-in-0:
           destination: planner-ws-order-ready
           group: order2
+          error-handler-definition: myErrorHandler
+
+
 
 
 

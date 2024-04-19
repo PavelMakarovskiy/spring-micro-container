@@ -11,9 +11,10 @@ import org.springframework.messaging.Message;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
+import reactor.util.retry.Retry;
 import ru.jb.micro.planner.entity.order.Order;
-import ru.jb.micro.planner.websocket.WebSocketHandler;
 
+import java.time.Duration;
 import java.util.function.Supplier;
 
 @Configuration // spring reads beans and create channels
@@ -39,14 +40,19 @@ public class MessageFuncProduce {
 
     @Bean
     public Supplier<Flux<Message<Order>>> orderUserSideProduce() {
-        return () -> innerOrderBusUserSide.asFlux();
+        return () -> innerOrderBusUserSide.asFlux()
+                .retryWhen(Retry.backoff(5, Duration.ofMillis(1000)))
+                //.onErrorResume(e -> e.)
+                ;
+
     }
 
     @Bean
     public Supplier<Flux<Message<Order>>> wsOrdersUserSideProduce() {
         return () -> {
             log.info("Called wsOrdersUserSideProduce.");
-            return wsOrderBusUserSide.asFlux();
+            return wsOrderBusUserSide.asFlux()
+                    .retryWhen(Retry.backoff(5, Duration.ofMillis(1000)));
         };
     }
 }

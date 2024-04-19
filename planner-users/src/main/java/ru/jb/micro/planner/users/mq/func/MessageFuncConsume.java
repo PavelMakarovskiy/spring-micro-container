@@ -1,8 +1,11 @@
 package ru.jb.micro.planner.users.mq.func;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import ru.jb.micro.planner.entity.order.Order;
@@ -10,6 +13,7 @@ import ru.jb.micro.planner.entity.order.OrderStatus;
 import ru.jb.micro.planner.users.order.OrderService;
 import ru.jb.micro.planner.users.user.User;
 import ru.jb.micro.planner.users.user.UserService;
+import ru.jb.micro.planner.websocket.WebSocketHandler;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,6 +22,8 @@ import java.util.function.Consumer;
 
 @Configuration
 public class MessageFuncConsume {
+
+    Logger log = LoggerFactory.getLogger(MessageFuncConsume.class);
 
     private final OrderService orderService;
 
@@ -91,6 +97,13 @@ public class MessageFuncConsume {
                     }
                 }
             }
+        };
+    }
+
+    @Bean
+    public Consumer<ErrorMessage> myErrorHandler() {
+        return errorMessage -> {
+            log.error("ERROR_HANDLING: {}", errorMessage);
         };
     }
 

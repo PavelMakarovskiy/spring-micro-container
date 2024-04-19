@@ -55,7 +55,7 @@ public class OrderHandlerService {
         {
             log.info("Service id " + eurekaClient.getApplicationInfoManager().getInfo().getInstanceId() + " is working.");
             messageActionsToDo.sendReadyWsOrderToDoSide(order);
-            log.info("Order # {} is {}" , order.getId(), order.getStatus());
+            log.info("Order # {} is {}", order.getId(), order.getStatus());
             int waitQty = order.getCategories().size();
             log.info("Order # " + order.getId() + " with categories " + order.getCategories() + " " + Thread.currentThread().getName());
             try {
