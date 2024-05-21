@@ -47,6 +47,11 @@
                   <project path="$PROJECT_DIR$/planner-utils" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/russian-payment-system" name="russian-payment-system">
+                <projects>
+                  <project path="$PROJECT_DIR$/russian-payment-system" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -62,6 +67,7 @@
             <option value="$PROJECT_DIR$/planner-todo" />
             <option value="$PROJECT_DIR$/planner-users" />
             <option value="$PROJECT_DIR$/planner-utils" />
+            <option value="$PROJECT_DIR$/russian-payment-system" />
           </set>
         </option>
       </GradleProjectSettings>

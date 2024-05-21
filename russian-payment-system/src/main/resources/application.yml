@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/fin
+    username: fin
+    password: fin
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: russian-payment-system
+  config:
+    import: configserver:http://localhost:8888
+  profiles:
+    active: micro
+#  kafka:
+#    consumer:
+#      bootstrap-servers: localhost:9092
+#      group-id: rus-ps-consumer
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#    producer:
+#      bootstrap-servers: localhost:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+app:
+  cache:
+    size: 365
+
+cbr:
+  url: "http://cbr.ru/scripts/XML_daily.asp"
