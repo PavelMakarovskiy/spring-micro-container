@@ -12,16 +12,16 @@ spring:
     import: configserver:http://localhost:8888
   profiles:
     active: micro
-#  kafka:
-#    consumer:
-#      bootstrap-servers: localhost:9092
-#      group-id: rus-ps-consumer
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#    producer:
-#      bootstrap-servers: localhost:9092
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: rus-ps-consumer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 app:
   cache:

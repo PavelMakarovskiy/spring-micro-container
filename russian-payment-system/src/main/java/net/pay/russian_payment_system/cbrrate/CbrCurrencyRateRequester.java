@@ -21,7 +21,6 @@ public class CbrCurrencyRateRequester implements CurrencyRateRequester{
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .build();
-
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
             } catch (IOException e) {
