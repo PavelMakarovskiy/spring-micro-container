@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-account-table-add-reserve
+      author: Pavel
+      changes:
+        - renameColumn:
+            tableName: account
+            newColumnName: reserve
+            oldColumnName: amount

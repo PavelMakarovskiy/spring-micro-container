@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.javamoney:moneta:1.4.4'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.0'
     implementation 'org.postgresql:postgresql:42.7.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

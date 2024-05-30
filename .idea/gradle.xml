@@ -27,6 +27,11 @@
                   <project path="$PROJECT_DIR$/github-config-server" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/indian-ps" name="indian-ps">
+                <projects>
+                  <project path="$PROJECT_DIR$/indian-ps" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/planner-entity" name="planner-entity">
                 <projects>
                   <project path="$PROJECT_DIR$/planner-entity" />
@@ -63,6 +68,7 @@
             <option value="$PROJECT_DIR$/eureka-client" />
             <option value="$PROJECT_DIR$/eureka-server" />
             <option value="$PROJECT_DIR$/github-config-server" />
+            <option value="$PROJECT_DIR$/indian-ps" />
             <option value="$PROJECT_DIR$/planner-entity" />
             <option value="$PROJECT_DIR$/planner-todo" />
             <option value="$PROJECT_DIR$/planner-users" />

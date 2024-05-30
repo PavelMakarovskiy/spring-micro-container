@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-transfer-table-date-timestamp
+      author: Pavel
+      changes:
+        - modifyDataType:
+            columnName: date
+            newDataType: timestamp
+            tableName: transfer

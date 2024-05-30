@@ -1,6 +1,4 @@
 spring:
-  liquibase:
-    enabled: true
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/fin
@@ -9,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   application:
-    name: russian-payment-system
+    name: indian-ps
   config:
     import: configserver:http://localhost:8888
   profiles:
@@ -17,17 +15,10 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
-      group-id: rus-ps-consumer
+      group-id: indian-ps
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: net.pay.russian_payment_system.serialization.TransferDeserializer
+      value-deserializer: net.pay.indianps.serialization.IndTransferDeserializer
     producer:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: net.pay.russian_payment_system.serialization.TransferSerializer
-
-app:
-  cache:
-    size: 365
-
-cbr:
-  url: "http://cbr.ru/scripts/XML_daily.asp"
+      value-serializer: net.pay.indianps.serialization.IndTransferSerializer

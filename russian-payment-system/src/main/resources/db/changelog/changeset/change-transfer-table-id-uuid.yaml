@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-transfer-table-id-uuid.yaml
+      author: Pavel
+      changes:
+        - modifyDataType:
+            columnName: id
+            newDataType: uuid
+            tableName: transfer
