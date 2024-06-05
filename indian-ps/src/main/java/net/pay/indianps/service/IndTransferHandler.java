@@ -36,6 +36,8 @@ public class IndTransferHandler {
                 if (Objects.equals(recipientAccount.getCurrency(), transfer.getCurrency())) {
                     long updateReserve = recipientAccount.getReserve() + transfer.getPayment();
                     accountMapper.updateReserve(recipientAccount.getId(), updateReserve);
+                    transfer.setStatus(TransferStatus.APPROVED);
+                    kafkaTemplate.send(FEEDBACK_TOPIC, transfer);
                 } else {
                     msg = "Not appropriate currency.";
                     respondRejectStatusWithComment(transfer, msg);

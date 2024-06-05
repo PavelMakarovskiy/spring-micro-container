@@ -6,6 +6,7 @@ import net.pay.russian_payment_system.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jb.micro.planner.entity.ps.Account;
@@ -39,5 +40,14 @@ public class AccountController {
             throw new CurrencyNotFoundException(e.getMessage());
         }
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/top_up/{account_id}/{amount}/{currency}")
+    public ResponseEntity<String> topUpAccount(@PathVariable("account_id") String account_id,
+                                               @PathVariable("amount") long amount, @PathVariable("currency") String currency) {
+        log.info("Request to top up account with id: " + account_id + " and amount: " + amount);
+        String response = "";
+        Account account = accountService.topUpAccount(account_id, amount, currency);
+        return ResponseEntity.ok().body("");
     }
 }

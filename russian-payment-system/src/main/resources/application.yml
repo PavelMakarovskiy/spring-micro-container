@@ -24,6 +24,8 @@ spring:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: net.pay.russian_payment_system.serialization.TransferSerializer
+mybatis:
+  type-handlers-package: net.pay.russian_payment_system.mapper
 
 app:
   cache:
@@ -31,3 +33,4 @@ app:
 
 cbr:
   url: "http://cbr.ru/scripts/XML_daily.asp"
+

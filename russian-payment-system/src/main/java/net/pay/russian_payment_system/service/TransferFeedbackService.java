@@ -20,9 +20,9 @@ public class TransferFeedbackService {
     public void listenTransferFeedback(Transfer transfer) {
         String msg = "";
         if (transfer != null && transfer.getId() != null) {
-            Optional<Transfer> optionalTransfer = transferMapper.getTransferById(transfer.getId().toString());
+            Optional<Transfer> optionalTransfer = transferMapper.getTransferById(transfer.getId());
             if (optionalTransfer.isPresent()) {
-                transferMapper.updateTransferStatus(transfer.getId().toString(), transfer.getStatus(), transfer.getComment());
+                transferMapper.updateTransferStatus(transfer.getId(), transfer.getStatus(), transfer.getComment());
             }
         }
     }

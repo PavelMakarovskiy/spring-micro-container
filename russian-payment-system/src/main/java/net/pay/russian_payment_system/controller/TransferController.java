@@ -5,6 +5,7 @@ import net.pay.russian_payment_system.exception.TransferHandleException;
 import net.pay.russian_payment_system.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +33,17 @@ public class TransferController {
         log.info("Request to send {} {} to account: {}", amount, currency, recipient_id);
         Transfer transfer = transferService.handleTransfer(recipient_id, currency, amount, purpose);
         kafkaTemplate.send(TOPIC_NAME, transfer);
-        String response = String.format("Payment with amount %d %s is %s. Recipient's account: %s",
-                transfer.getPayment(), transfer.getCurrency(), transfer.getStatus(), transfer.getRecipient_id());
+        String response = String.format("Payment id: %s, with amount %d %s is %s. Recipient's account: %s",
+                transfer.getId(), transfer.getPayment(), transfer.getCurrency(), transfer.getStatus(), transfer.getRecipient_id());
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/check_status/{id}")
+    public ResponseEntity<String> getTransferStatus(@PathVariable("id") String id) throws TransferHandleException {
+        log.info("Request to get transfer status: {}", id);
+        Transfer transfer = transferService.getTransfer(id);
+        String response = String.format("Payment id: %s, with amount %d %s is %s. Recipient's account: %s",
+                transfer.getId(), transfer.getPayment(), transfer.getCurrency(), transfer.getStatus(), transfer.getRecipient_id());
         return ResponseEntity.ok().body(response);
     }
 }

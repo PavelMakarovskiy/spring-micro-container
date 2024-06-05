@@ -1,23 +1,24 @@
 package net.pay.russian_payment_system.service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.pay.russian_payment_system.exception.AccountHandleException;
 import net.pay.russian_payment_system.exception.CurrencyNotFoundException;
 import net.pay.russian_payment_system.exception.ReserveException;
 import net.pay.russian_payment_system.exception.TransferHandleException;
 import net.pay.russian_payment_system.mapper.AccountMapper;
 import net.pay.russian_payment_system.mapper.TransferMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.jb.micro.planner.entity.ps.Account;
 import ru.jb.micro.planner.entity.ps.Transfer;
 import ru.jb.micro.planner.entity.ps.TransferStatus;
 
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
-import javax.security.auth.login.AccountNotFoundException;
+
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,18 +36,18 @@ public class TransferIntService implements TransferService {
         this.accountService = accountService;
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Transfer handleTransfer(String recipient_id, String currency, long amount, String purpose) throws TransferHandleException {
         Optional<Account> optionalRecipientAccount = accountMapper.getAccountById(recipient_id);
         if (optionalRecipientAccount.isPresent()) {
             CurrencyUnit currencyUnit = Monetary.getCurrency(currency);
-            if (currencyUnit != null) {
                 Optional<Account> optionalSenderAccount = accountMapper.getRusAccountByCurrency(currency);
                 if (optionalSenderAccount.isPresent()) {
                     Transfer transfer = createTransfer(optionalSenderAccount.get(), optionalRecipientAccount.get(), amount, purpose);
                     Long withdraw = withdrawMoney(optionalSenderAccount.get(), amount, transfer);
                     if (withdraw != null) {
-                        String id = addTransfer(transfer);
+                        UUID id = addTransfer(transfer);
                         Optional<Transfer> transferOptional = transferMapper.getTransferById(id);
                         if (transferOptional.isPresent()) {
                             return transferOptional.get();
@@ -70,38 +71,37 @@ public class TransferIntService implements TransferService {
                     try {
                         String message = "No appropriate sender's account for currency: ";
                         log.info(message.concat("{}"), currency);
-                        throw new AccountNotFoundException(message.concat(currency));
-                    } catch (AccountNotFoundException e) {
+                        throw new AccountHandleException(message.concat(currency));
+                    } catch (AccountHandleException e) {
                         throw new RuntimeException(e);
                     }
                 }
-            } else {
-                try {
-                    String message = "No such currency: ";
-                    log.info(message.concat("{}"), currency);
-                    throw new CurrencyNotFoundException(message.concat(currency));
-                } catch (CurrencyNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         } else {
             try {
                 String message = "No recipient's account with #";
                 log.info(message.concat("{}"), recipient_id);
-                throw new AccountNotFoundException(message.concat(currency));
-            } catch (AccountNotFoundException e) {
+                throw new AccountHandleException(message.concat(recipient_id));
+            } catch (AccountHandleException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Transfer getTransfer(String transferId) throws TransferHandleException {
+        Optional<Transfer> optionalTransfer = transferMapper.getTransferById(UUID.fromString(transferId));
+        if (optionalTransfer.isPresent()) {
+            return optionalTransfer.get();
+        } else {
+            String msg = "No transfer with id: ".concat(transferId);
+            log.error(msg);
+            throw new TransferHandleException(msg);
+        }
+    }
+
     private Transfer createTransfer(Account senderAccount, Account recipientAccount, long amount, String purpose) {
         Transfer transfer = new Transfer();
-        UUID uuid = UUID.randomUUID();
-        while (isIdExist(uuid)) {
-            uuid = UUID.randomUUID();
-        }
-        transfer.setId(uuid);
         transfer.setCurrency(senderAccount.getCurrency());
         transfer.setPayment(amount);
         transfer.setDate(LocalDateTime.now());
@@ -112,16 +112,11 @@ public class TransferIntService implements TransferService {
         return transfer;
     }
 
-    public boolean isIdExist(UUID uuid) {
-        if (transferMapper.getTransferById(uuid.toString()).isPresent()) {
-            return true;
-        }
-        return false;
-    }
-
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Long withdrawMoney(Account account, long amount, Transfer transfer) {
         long reserve = account.getReserve();
         Long withdraw = null;
+        UUID id = null;
         long updatedReserve = 0;
         if (reserve >= amount) {
             updatedReserve = reserve - amount;
@@ -131,10 +126,14 @@ public class TransferIntService implements TransferService {
                 return withdraw;
             }
         } else {
-            String message = "Not enough money to withdraw";
+            String message = "Not enough money to arrange payment with "
+                    .concat(String.valueOf(amount))
+                    .concat(" ")
+                    .concat(transfer.getCurrency());
+            log.error(message);
             transfer.setStatus(TransferStatus.CANCELLED);
             transfer.setComment(message);
-            String id = addTransfer(transfer);
+            id = addTransfer(transfer);
             if (id != null && transferMapper.getTransferById(id).isPresent()) {
                 log.info("Transfer with id: {} added in DB", id);
             } else {
@@ -147,7 +146,7 @@ public class TransferIntService implements TransferService {
                     throw new RuntimeException(e);
                 }
             }
-            String message2 = " for transfer id: ".concat(transfer.getId().toString());
+            String message2 = " for transfer id: ".concat(id.toString());
             log.error(message.concat(message2));
             try {
                 throw new ReserveException(message.concat(message2));
@@ -158,8 +157,8 @@ public class TransferIntService implements TransferService {
         return withdraw;
     }
 
-    public String addTransfer(Transfer tr) {
-        return transferMapper.addTransfer(tr.getId().toString(), tr.getCurrency(), tr.getPayment(), Timestamp.valueOf(tr.getDate()),
-                tr.getSender_id(), tr.getRecipient_id(), tr.getPurpose(), tr.getStatus(), tr.getComment());
+    public UUID addTransfer(Transfer tr) {
+        return UUID.fromString(transferMapper.addTransfer(tr.getCurrency(), tr.getPayment(), Timestamp.valueOf(tr.getDate()),
+                tr.getSender_id(), tr.getRecipient_id(), tr.getPurpose(), tr.getStatus(), tr.getComment()));
     }
 }

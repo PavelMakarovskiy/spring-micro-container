@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-table-transfer-id-uuid-autogenerate2.yaml
+      author: Pavel
+      changes:
+        - createTable:
+            tableName: transfer
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sender_id
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_sender_id
+                    references: account(id)
+              - column:
+                  name: recipient_id
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purpose
+                  type: varchar(200)
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(500)

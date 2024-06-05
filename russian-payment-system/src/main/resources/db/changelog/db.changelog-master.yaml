@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/changeset/change-transfer-table-date-timestamp.yaml
   - include:
       file: db/changelog/changeset/change-transfer-table-id-uuid.yaml
+  - include:
+      file: db/changelog/changeset/change-table-transfer-id-uuid-autogenerate2.yaml

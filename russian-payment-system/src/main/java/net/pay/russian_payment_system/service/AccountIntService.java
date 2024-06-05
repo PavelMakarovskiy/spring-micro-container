@@ -5,6 +5,8 @@ import net.pay.russian_payment_system.exception.AccountHandleException;
 import net.pay.russian_payment_system.exception.ReserveException;
 import net.pay.russian_payment_system.mapper.AccountMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.jb.micro.planner.entity.ps.Account;
 
 import java.time.LocalDate;
@@ -21,6 +23,8 @@ public class AccountIntService implements AccountService {
         this.accountMapper = accountMapper;
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
     public boolean updateReserve(String id, Long reserve) {
         Optional<Account> optionalAccount = accountMapper.getAccountById(id);
         String message = "Error while updating reserve for account id: ".concat(id).concat(". ");
@@ -78,6 +82,21 @@ public class AccountIntService implements AccountService {
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Account topUpAccount(String accountId, long amount, String currency) {
+        Optional<Account> optionalAccount = accountMapper.getAccountById(accountId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            if (account.getCurrency().equals(currency)) {
+                long updateReserve = account.getReserve() + amount;
+                accountMapper.updateReserve(accountId, updateReserve);
+            }
+        }
+        return null;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String checkAndIncrementAccountNumber(String newId) {
         Optional<Account> optionalAccount = accountMapper.getAccountById(newId);
         if (optionalAccount.isPresent()) {

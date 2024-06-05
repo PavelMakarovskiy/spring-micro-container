@@ -10,4 +10,5 @@ public interface AccountService {
 
     Account createAccount(String country, String currency, long reserve);
 
+    Account topUpAccount(String accountId, long amount, String currency);
 }
