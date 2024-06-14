@@ -1,6 +1,7 @@
 package net.pay.russian_payment_system.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import net.pay.russian_payment_system.exception.ReserveException;
 import net.pay.russian_payment_system.exception.TransferHandleException;
 import net.pay.russian_payment_system.service.TransferService;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,10 @@ public class TransferController {
 
     @PostMapping("/{recipient_id}/{currency}/{amount}/{purpose}")
     public ResponseEntity<String> sendFunds(@PathVariable("recipient_id") String recipient_id, @PathVariable("currency") String currency,
-                                            @PathVariable("amount") long amount, @PathVariable("purpose") String purpose) throws TransferHandleException {
+                                            @PathVariable("amount") long amount, @PathVariable("purpose") String purpose) throws TransferHandleException, ReserveException {
         log.info("Request to send {} {} to account: {}", amount, currency, recipient_id);
-        Transfer transfer = transferService.handleTransfer(recipient_id, currency, amount, purpose);
+        Transfer transfer = null;
+        transfer = transferService.handleTransfer(recipient_id, currency, amount, purpose);
         kafkaTemplate.send(TOPIC_NAME, transfer);
         String response = String.format("Payment id: %s, with amount %d %s is %s. Recipient's account: %s",
                 transfer.getId(), transfer.getPayment(), transfer.getCurrency(), transfer.getStatus(), transfer.getRecipient_id());

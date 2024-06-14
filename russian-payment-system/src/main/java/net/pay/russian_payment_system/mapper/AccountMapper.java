@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.dao.CannotSerializeTransactionException;
 import ru.jb.micro.planner.entity.ps.Account;
 
 import java.util.Optional;
@@ -21,8 +22,11 @@ public interface AccountMapper {
     @Select("SELECT reserve FROM account WHERE id = #{id}")
     Optional<Long> getReserveById(@Param("id") String id);
 
-    @Update("UPDATE account SET reserve = #{reserve} WHERE id = #{id}")
-    void updateReserve(@Param("id") String id, @Param("reserve") Long reserve);
+    @Update("UPDATE account SET reserve = reserve - #{amount} WHERE id = #{id}")
+    void takeFromReserve(@Param("id") String id, @Param("amount") Long amount) throws CannotSerializeTransactionException;
+
+    @Update("UPDATE account SET reserve = reserve + #{amount} WHERE id = #{id}")
+    void topUpReserve(@Param("id") String id, @Param("amount") Long amount);
 
     @Insert("INSERT INTO account(id, currency, country, reserve) values (#{id}, #{currency}, #{country}, #{reserve})")
     void createAccount(@Param("id") String id, @Param("currency") String currency, @Param("country") String country, @Param("reserve") Long reserve);

@@ -2,11 +2,12 @@ package net.pay.russian_payment_system.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.pay.russian_payment_system.exception.AccountHandleException;
-import net.pay.russian_payment_system.exception.CurrencyNotFoundException;
 import net.pay.russian_payment_system.exception.ReserveException;
 import net.pay.russian_payment_system.exception.TransferHandleException;
 import net.pay.russian_payment_system.mapper.AccountMapper;
 import net.pay.russian_payment_system.mapper.TransferMapper;
+import org.springframework.dao.CannotSerializeTransactionException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +37,10 @@ public class TransferIntService implements TransferService {
         this.accountService = accountService;
     }
 
+    @Retryable(CannotSerializeTransactionException.class)
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public Transfer handleTransfer(String recipient_id, String currency, long amount, String purpose) throws TransferHandleException {
+    public Transfer handleTransfer(String recipient_id, String currency, long amount, String purpose) throws TransferHandleException, ReserveException, CannotSerializeTransactionException {
         Optional<Account> optionalRecipientAccount = accountMapper.getAccountById(recipient_id);
         if (optionalRecipientAccount.isPresent()) {
             CurrencyUnit currencyUnit = Monetary.getCurrency(currency);
@@ -87,9 +89,9 @@ public class TransferIntService implements TransferService {
         }
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    // @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public Transfer getTransfer(String transferId) throws TransferHandleException {
+    public Transfer getTransfer(String transferId) throws TransferHandleException, CannotSerializeTransactionException {
         Optional<Transfer> optionalTransfer = transferMapper.getTransferById(UUID.fromString(transferId));
         if (optionalTransfer.isPresent()) {
             return optionalTransfer.get();
@@ -112,18 +114,15 @@ public class TransferIntService implements TransferService {
         return transfer;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Long withdrawMoney(Account account, long amount, Transfer transfer) {
-        long reserve = account.getReserve();
+    // @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Long withdrawMoney(Account account, long amount, Transfer transfer) throws ReserveException, CannotSerializeTransactionException {
         Long withdraw = null;
-        UUID id = null;
-        long updatedReserve = 0;
+        UUID id;
+        long reserve = accountService.getReserveById(account.getId());
         if (reserve >= amount) {
-            updatedReserve = reserve - amount;
-            boolean successReserveUpdate = accountService.updateReserve(account.getId(), updatedReserve);
+            boolean successReserveUpdate = accountService.takeFromReserve(account.getId(), amount);
             if (successReserveUpdate) {
-                withdraw = reserve - updatedReserve;
-                return withdraw;
+                return amount;
             }
         } else {
             String message = "Not enough money to arrange payment with "

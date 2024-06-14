@@ -1,12 +1,12 @@
 package net.pay.russian_payment_system.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import net.pay.russian_payment_system.exception.AccountHandleException;
 import net.pay.russian_payment_system.exception.CurrencyNotFoundException;
 import net.pay.russian_payment_system.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jb.micro.planner.entity.ps.Account;
@@ -44,10 +44,12 @@ public class AccountController {
 
     @PostMapping("/top_up/{account_id}/{amount}/{currency}")
     public ResponseEntity<String> topUpAccount(@PathVariable("account_id") String account_id,
-                                               @PathVariable("amount") long amount, @PathVariable("currency") String currency) {
+                                               @PathVariable("amount") long amount, @PathVariable("currency") String currency) throws AccountHandleException {
         log.info("Request to top up account with id: " + account_id + " and amount: " + amount);
         String response = "";
         Account account = accountService.topUpAccount(account_id, amount, currency);
-        return ResponseEntity.ok().body("");
+        response = String.format("Successfully top up account id: %s, currency: %s, reserve: %d",
+                account.getId(), account.getCurrency(), account.getReserve());
+        return ResponseEntity.ok().body(response);
     }
 }
