@@ -26,28 +26,19 @@ public class AccountIntService implements AccountService {
         this.accountMapper = accountMapper;
     }
 
-    // @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public boolean takeFromReserve(String id, Long amount) throws CannotSerializeTransactionException {
         Optional<Account> optionalAccount = accountMapper.getAccountById(id);
         String message = "Error while updating reserve for account id: ".concat(id).concat(". ");
         String message2 = "Account with id: ".concat(id).concat(" is absent.");
         if (optionalAccount.isPresent()) {
-            long exReserve = optionalAccount.get().getReserve();
-       //     try {
-                accountMapper.takeFromReserve(id, amount);
-       //     } catch (CannotSerializeTransactionException e) {
-              //  log.error("CannotSerializeTransactionException, repeat request.");
-        //        return this.takeFromReserve(id, amount);
-       //     }
+            accountMapper.takeFromReserve(id, amount);
             Optional<Long> optionalCheckReserve = accountMapper.getReserveById(id);
             if (optionalCheckReserve.isPresent()) {
                 if (optionalCheckReserve.get() >= 0) {
                     log.info("Successfully updated reserve for account id: {}", id);
                     return true;
                 } else {
-//                    String message3 = "Required reserve is: ".concat(String.valueOf(exReserve - amount))
-//                            .concat(", but current reserve is: ".concat(String.valueOf(optionalCheckReserve.get())));
                     String message3 = "Not enough reserve for account id: ".concat(id).concat(". ");
                     log.error(message.concat(message3));
                     try {
@@ -93,7 +84,7 @@ public class AccountIntService implements AccountService {
         }
     }
 
-    //  @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Account topUpAccount(String accountId, long amount, String currency) throws AccountHandleException, CannotSerializeTransactionException {
         CurrencyUnit currencyUnit = Monetary.getCurrency(currency);
@@ -163,7 +154,6 @@ public class AccountIntService implements AccountService {
         }
     }
 
-    // @Transactional(isolation = Isolation.SERIALIZABLE)
     public String checkAndIncrementAccountNumber(String newId) throws CannotSerializeTransactionException {
         Optional<Account> optionalAccount = accountMapper.getAccountById(newId);
         if (optionalAccount.isPresent()) {

@@ -20,11 +20,11 @@ public class ExceptionAdvice {
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
 
-//    @ExceptionHandler({CannotSerializeTransactionException.class})
-//    public ResponseEntity<String> handleTransactionException(Exception ex) {
-//        log.error("CannotSerializeTransactionException");
-//        String response = "Ошибка при совершении транзакции. Повторите попытку.";
-//        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-//    }
+    @ExceptionHandler({CannotSerializeTransactionException.class})
+    public ResponseEntity<String> handleTransactionException(Exception ex) {
+        log.error("CannotSerializeTransactionException");
+        String response = "Ошибка при совершении транзакции. Повторите попытку.";
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 
 }

@@ -39,6 +39,8 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.retry:spring-retry:2.0.5")
 }
 
 dependencyManagement {

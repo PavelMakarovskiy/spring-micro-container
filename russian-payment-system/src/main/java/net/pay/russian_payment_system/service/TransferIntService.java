@@ -7,6 +7,7 @@ import net.pay.russian_payment_system.exception.TransferHandleException;
 import net.pay.russian_payment_system.mapper.AccountMapper;
 import net.pay.russian_payment_system.mapper.TransferMapper;
 import org.springframework.dao.CannotSerializeTransactionException;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -37,7 +38,7 @@ public class TransferIntService implements TransferService {
         this.accountService = accountService;
     }
 
-    @Retryable(CannotSerializeTransactionException.class)
+    @Retryable(value = {CannotSerializeTransactionException.class}, maxAttempts = 100, backoff = @Backoff(delay = 100))
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Transfer handleTransfer(String recipient_id, String currency, long amount, String purpose) throws TransferHandleException, ReserveException, CannotSerializeTransactionException {
@@ -89,7 +90,6 @@ public class TransferIntService implements TransferService {
         }
     }
 
-    // @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Transfer getTransfer(String transferId) throws TransferHandleException, CannotSerializeTransactionException {
         Optional<Transfer> optionalTransfer = transferMapper.getTransferById(UUID.fromString(transferId));
@@ -114,7 +114,6 @@ public class TransferIntService implements TransferService {
         return transfer;
     }
 
-    // @Transactional(isolation = Isolation.SERIALIZABLE)
     public Long withdrawMoney(Account account, long amount, Transfer transfer) throws ReserveException, CannotSerializeTransactionException {
         Long withdraw = null;
         UUID id;
